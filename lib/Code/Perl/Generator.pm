@@ -14,6 +14,13 @@ sub new {
 	return $self;
 }
 
+sub new_package {
+	my ($self, %details) = @_;
+	$self->{outdir} = $details{outdir} || $self->{outdir};
+	$self->{package} = $details{package} || warn "new_package: No package given";
+	$self->{content} = ();
+}
+
 sub add {
 	my ($self, $name, $value) = @_;
 	local $Data::Dumper::Indent = 1;
@@ -54,7 +61,25 @@ EOF
 
 	print $file "\n1;";
 	close $file;
-	return ($package, $filename);
+	return $self->verify_package($package, $filename);
+}
+
+sub verify_package {
+	my ($self, $package, $filename) = @_;
+	eval "use $package;";
+	if ($@) {
+		warn "Generator.pm: Syntax error in $filename
+		Error: $@";
+		return 0;
+	}
+	return 1;
+}
+
+sub create_or_die {
+	my ($self, $die_message) = shift;
+	if (! $self->create()) {
+		die "$die_message";
+	}
 }
 
 1;
