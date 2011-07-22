@@ -21,6 +21,11 @@ sub new_package {
 	$self->{content} = ();
 }
 
+sub add_comment {
+	my ($self, @comments) = @_;
+	$self->_add_content("# " . join("\n# ", @comments));
+}
+
 sub add {
 	my ($self, $name, $value) = @_;
 	local $Data::Dumper::Indent = 1;
