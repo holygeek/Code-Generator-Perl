@@ -9,7 +9,7 @@ sub new {
 	my $self = {};
 	$self->{outdir} = $details{outdir} || '.';
 	$self->{package} = $details{package};
-	$self->{content} = $details{content} || ();
+	$self->{content} = ();
 	bless ($self, $class);
 	return $self;
 }
