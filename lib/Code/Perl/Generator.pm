@@ -76,6 +76,10 @@ sub verify_package {
 		warn "Generator.pm: Syntax error in $filename
 		Error: $@";
 		return 0;
+	} else {
+		if ($ENV{verbose}) {
+			print STDERR "$filename\n";
+		}
 	}
 	return 1;
 }
