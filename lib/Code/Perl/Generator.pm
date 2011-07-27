@@ -26,11 +26,33 @@ sub add_comment {
 	$self->_add_content("# " . join("\n# ", @comments));
 }
 
+sub hash_keys_sorter {
+	my ($hash_ref) = @_;
+	my @keys = keys %$hash_ref;
+
+	# Assume all keys are numeric if one of them is
+	# and sort them numerically
+	if ($keys[0] =~ /^\d+$/) {
+		@keys = sort { $a <=> $b } @keys;
+	} else {
+		@keys = sort @keys;
+	}
+	return \@keys;
+}
+
 sub add {
-	my ($self, $name, $value) = @_;
+	my ($self, $name, $value, $options) = @_;
 	local $Data::Dumper::Indent = 1;
 	local $Data::Dumper::Purity = 1;
-	$self->_add_content('our ' . Data::Dumper->Dump([$value], [$name]));
+	my $content;
+	if ($options->{sortkeys}) {
+		local $Data::Dumper::Sortkeys = \&hash_keys_sorter;
+		$content = Data::Dumper->Dump([$value], [$name])
+	} else {
+		local $Data::Dumper::Sortkeys = 0;
+		$content = Data::Dumper->Dump([$value], [$name])
+	}
+	$self->_add_content('our ' . $content);
 }
 
 sub _add_content {
