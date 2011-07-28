@@ -14,7 +14,7 @@ sub new {
 	my ($class, %details) = @_;
 	my $self = {};
 	$self->{outdir} = $details{outdir} || '.';
-	$self->{package} = $details{package};
+	$self->{base_package} = $details{base_package} || '';
 	$self->{content} = ();
 	bless ($self, $class);
 	return $self;
@@ -24,6 +24,7 @@ sub new_package {
 	my ($self, %details) = @_;
 	$self->{outdir} = $details{outdir} || $self->{outdir};
 	$self->{package} = $details{package} || warn "new_package: No package given";
+	$self->{package} = join('::', $self->{base_package}, $self->{package});
 	$self->{content} = ();
 }
 
