@@ -1,5 +1,8 @@
 package Code::Perl::Generator;
 
+use strict;
+use warnings;
+
 use Data::Dumper;
 
 our $VERSION = '0.01';
@@ -70,7 +73,7 @@ sub create {
 	$outdir = join('/', $outdir, @dir);
 	$filename = join('/', $outdir, $filename . '.pm');
 
-	if (! -d $package_dir) {
+	if (! -d $outdir) {
 		`mkdir -p $outdir`;
 	}
 
