@@ -4,6 +4,9 @@ use strict;
 use warnings;
 
 use Data::Dumper;
+use Carp;
+
+our %packages_created;
 
 our $VERSION = '0.01';
 
@@ -68,6 +71,15 @@ sub create {
 
 	my $outdir = $self->{outdir};
 	my $package = $self->{package};
+	if ($packages_created{$package}) {
+		croak join("\n",
+				"ERROR: Package $package has already been written before!",
+				"\tMost likely this is not what you want.",
+				"\tBailing out.",
+		);
+	}
+	$packages_created{$package} = 1;
+
 	my @dir = split('::', $self->{package});
 	my $filename = pop @dir;
 	$outdir = join('/', $outdir, @dir);
