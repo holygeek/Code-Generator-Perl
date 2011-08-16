@@ -128,8 +128,9 @@ sub verify_package {
 
 sub create_or_die {
 	my ($self, $die_message) = shift;
+	$die_message ||= '';
 	if (! $self->create()) {
-		die "$die_message";
+		die "$die_message $!";
 	}
 }
 
