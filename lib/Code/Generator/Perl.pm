@@ -8,7 +8,7 @@ use Carp;
 
 our %packages_created;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub new {
 	my ($class, %details) = @_;
