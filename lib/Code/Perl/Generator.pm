@@ -131,6 +131,7 @@ EOF
 
 sub verify_package {
 	my ($self, $package, $filename) = @_;
+	eval "use lib '" . $self->{outdir} . "';";
 	eval "use $package;";
 	if ($@) {
 		warn "Generator.pm: Syntax error in $filename
