@@ -9,4 +9,5 @@ WriteMakefile(
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Code/Generator/Perl.pm', # retrieve abstract from module
        AUTHOR         => 'nazri <nazri@>') : ()),
+    clean             => { FILES => 't/tmp' },
 );
