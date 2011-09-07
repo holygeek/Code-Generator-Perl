@@ -1,4 +1,4 @@
-package Code::Perl::Generator;
+package Code::Generator::Perl;
 
 use strict;
 use warnings;
@@ -134,8 +134,7 @@ sub verify_package {
 	eval "use lib '" . $self->{outdir} . "';";
 	eval "use $package;";
 	if ($@) {
-		warn "Generator.pm: Syntax error in $filename
-		Error: $@";
+		warn "Error while generating $filename:\n\t$@";
 		return 0;
 	} else {
 		if ($ENV{verbose}) {
@@ -157,13 +156,13 @@ sub create_or_die {
 __END__
 =head1 NAME
 
-Code::Perl::Generator - Perl module for generating perl modules
+Code::Generator::Perl - Perl module for generating perl modules
 
 =head1 SYNOPSIS
 
-  use Code::Perl::Generator;
+  use Code::Generator::Perl;
 
-  my $generator = new Code::Perl::Generator();
+  my $generator = new Code::Generator::Perl();
 
   my @fib_sequence = ( 1, 1, 2, 3, 5, 8 );
 
@@ -187,7 +186,7 @@ Code::Perl::Generator - Perl module for generating perl modules
 
 =head1 DESCRIPTION
 
-Code::Perl::Generator generates perl modules for you.
+Code::Generator::Perl generates perl modules for you.
 
 The idea is that you specify the module name and what variables it has and it
 will spit out the .pm files for you, using Data::Dumper to do the actual

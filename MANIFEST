@@ -2,5 +2,5 @@ Changes
 Makefile.PL
 MANIFEST
 README
-t/Code-Perl-Generator.t
-lib/Code/Perl/Generator.pm
+t/Code-Generator-Perl.t
+lib/Code/Generator/Perl.pm
