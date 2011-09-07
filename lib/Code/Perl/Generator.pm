@@ -39,8 +39,9 @@ sub hash_keys_sorter {
 	my ($hash_ref) = @_;
 	my @keys = keys %$hash_ref;
 
-	# Assume all keys are numeric if one of them is
-	# and sort them numerically
+	# Assume all keys are numeric if one of them (picked at random) is
+	# and sort them numerically.  Don't fret if we get a false positive
+	# as this is only for presentation only.
 	if ($keys[0] =~ /^\d+$/) {
 		@keys = sort { $a <=> $b } @keys;
 	} else {
