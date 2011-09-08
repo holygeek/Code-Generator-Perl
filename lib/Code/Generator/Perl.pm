@@ -68,7 +68,8 @@ sub new_package {
 	}
 	$self->{content} = ();
 
-	$self->{package_readonly} = $details{readonly} || 0;
+	$self->{package_readonly} = $self->{readonly};
+	$self->{package_readonly} = $details{readonly} if defined $details{readonly};
 
 	$self->_init_use();
 	return $self;
@@ -87,10 +88,10 @@ sub add {
 	local $Data::Dumper::Deepcopy = 0;
 	local $Data::Dumper::Sortkeys = $options->{sortkeys} || 0;
 
-	my $readonly = $options->{readonly}
-			|| $self->{package_readonly}
-			|| $self->{readonly}
-			;
+	my $readonly = $self->{readonly};
+	$readonly = $self->{package_readonly} if defined $self->{package_readonly};
+	$readonly = $options->{readonly} if defined $options->{readonly};
+
 	local $Data::Dumper::Deepcopy = $readonly;
 
 	my $content = Data::Dumper->Dump([$value], [$name]);
