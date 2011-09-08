@@ -124,7 +124,7 @@ $use_readonly
 EOF
 	print $file join("\n", @{$self->{content}});
 
-	print $file "\n1;";
+	print $file "\n1;\n";
 	close $file;
 	return $self->verify_package($package, $filename);
 }
