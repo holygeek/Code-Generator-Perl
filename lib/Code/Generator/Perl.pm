@@ -202,7 +202,7 @@ joins to come up with the same data.
 
 =over 4
 
-=item I<PACKAGE>->new(option => value, ...)
+=item new(option => value, ...)
 
 Creates the generator object.  Available options are
 
@@ -228,15 +228,15 @@ know which script generates your generated files.
 
 =back
 
-=item I<PACKAGE>->new_package(package => 'Package::Name')
+=item new_package(package => 'Package::Name')
 
 Prepare the generator for creating a new package. Previous contents are cleared.
 
-=item I<PACKAGE>->add_comment('some comment', 'another comment')
+=item add_comment('some comment', 'another comment')
 
 Add comments. They will be joined with newlines.
 
-=item I<PACKAGE>->add(variable_name => $ref, { option => value })
+=item add(variable_name => $ref, { option => value })
 
 Add a variable with the given name, pointing to $ref. Options are:
 
@@ -244,8 +244,8 @@ Add a variable with the given name, pointing to $ref. Options are:
 
 =item sortkeys
 
-If set to true then $ref is assumed to be a HASHREF and the hash will be sorted
-by keys when dumped.
+This value will be passed to I<$Data::Dumper::Sortkeys>. See the
+Data::Dumper documentation for how this value is used.
 
 =back
 
