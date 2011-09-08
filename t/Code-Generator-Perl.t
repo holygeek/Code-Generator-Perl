@@ -149,6 +149,7 @@ ok($generator
 		package => $package_name,
 		readonly => 1)
 	->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, })
+	->add(pi => 3.14)
 	->create(),
 	"Generate $package_name");
 $expected = <<EOT;
@@ -166,6 +167,8 @@ Readonly::Scalar our \$wheel_count_for => {
   'car' => 4
 };
 
+Readonly::Scalar our \$pi => '3.14';
+
 1;
 EOT
 ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_name");
@@ -174,6 +177,7 @@ $package_name = 'PackageNoReadonly';
 ok($generator
 	->new_package(package => $package_name)
 	->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, })
+	->add(pi => 3.14)
 	->create(),
 	"Generate $package_name");
 $expected = <<EOT;
@@ -189,6 +193,8 @@ our \$wheel_count_for = {
   'bicycle' => 2,
   'car' => 4
 };
+
+our \$pi = '3.14';
 
 1;
 EOT
