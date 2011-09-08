@@ -36,7 +36,7 @@ sub _init_use {
 	    $self->use(qw/strict warnings/);
 	}
 
-	if ($self->{readonly}) {
+	if ($self->{readonly} || $self->{package_readonly}) {
 	    $self->use('Readonly');
 	}
 }
@@ -67,12 +67,9 @@ sub new_package {
 	}
 	$self->{content} = ();
 
-	$self->_init_use();
+	$self->{package_readonly} = $details{readonly} || 0;
 
-	if ($details{readonly}) {
-		$self->use('Readonly');
-		$self->{package_readonly} = 1;
-	}
+	$self->_init_use();
 }
 
 sub add_comment {
@@ -87,13 +84,16 @@ sub add {
 	local $Data::Dumper::Deepcopy = 0;
 	local $Data::Dumper::Sortkeys = $options->{sortkeys} || 0;
 
-	# The moment we don't support per-variable readonly yet. It's either
-	# all or none.
-	local $Data::Dumper::Deepcopy = $self->{readonly};
+	my $readonly = $options->{readonly}
+			|| $self->{package_readonly}
+			|| $self->{readonly}
+			;
+	local $Data::Dumper::Deepcopy = $readonly;
 
 	my $content = Data::Dumper->Dump([$value], [$name]);
 
-	if ($self->{package_readonly} || $self->{readonly}) {
+	if ($readonly) {
+		$self->use('Readonly');
 		$content =~ s/=/=>/;
 		$self->_add_content('Readonly::Scalar our ' . $content);
 	} else {
@@ -165,8 +165,6 @@ sub create {
 
 	$print_line->('1;');
 	$done->();
-	delete $self->{package_readonly};
-	delete $self->{package_generated_by};
 	return $self->_verify_package($package, $filename);
 }
 
