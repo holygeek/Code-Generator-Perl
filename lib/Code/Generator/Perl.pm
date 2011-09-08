@@ -42,8 +42,8 @@ sub _init_use {
 }
 
 sub use {
-    my ($self, @packages) = @_;
-    map { $self->_add_if_not_yet_used($_) } @packages;
+	my ($self, @packages) = @_;
+	map { $self->_add_if_not_yet_used($_) } @packages;
 }
 
 sub _add_if_not_yet_used {
