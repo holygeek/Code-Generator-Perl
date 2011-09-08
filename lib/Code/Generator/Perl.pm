@@ -5,6 +5,7 @@ use warnings;
 
 use Data::Dumper;
 use Carp;
+use File::Spec::Functions;
 
 my %packages_created;
 
@@ -122,8 +123,8 @@ sub create {
 
 	my @dir = split('::', $self->{package});
 	my $filename = pop @dir;
-	$outdir = join('/', $outdir, @dir);
-	$filename = join('/', $outdir, $filename . '.pm');
+	$outdir = catfile($outdir, @dir);
+	$filename = catfile($outdir, $filename . '.pm');
 
 	if (! -d $outdir) {
 		`mkdir -p $outdir`;
