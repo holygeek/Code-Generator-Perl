@@ -61,17 +61,11 @@ diag('You can safely ignore the following error message:');
 ok(!$generator->create(), 'Barf on error');
 diag('You can now go back to not-ignoring any error messages from here onwards.');
 
+my $wheel_count_for = { car => 4, bicycle => 2, };
+
 $package_name = 'CorrectOrdering';
 $generator->new_package(package => $package_name);
-$generator->add(
-    wheel_count_for => {
-	car => 4,
-	bicycle => 2,
-    },
-    {
-	sortkeys => 1,
-    }
-);
+$generator->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, });
 ok($generator->create(), "Generate $package_name.pm");
 $expected = <<EOT;
 package $package_name;
@@ -89,7 +83,6 @@ our \$wheel_count_for = {
 
 1;
 EOT
-
 ok (compare_with_file($expected, "t/tmp/$package_name.pm"), 'Correct ordering');
 
 $package_name = 'UseNone';
@@ -99,15 +92,7 @@ $generator->new_package(
 		nostrict => 1,
 		nowarnings => 1
 );
-$generator->add(
-    wheel_count_for => {
-	car => 4,
-	bicycle => 2,
-    },
-    {
-	sortkeys => 1,
-    }
-);
+$generator->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, });
 ok($generator->create(), "Generate $package_name.pm");
 $expected = <<EOT;
 package $package_name;
@@ -122,7 +107,6 @@ our \$wheel_count_for = {
 
 1;
 EOT
-
 ok (compare_with_file($expected, "t/tmp/$package_name.pm"), 'Use none');
 
 $package_name = 'NewGeneratedBy';
@@ -130,15 +114,7 @@ $generator->new_package(
 	package => $package_name,
 	generated_by => 'space aliens',
 );
-$generator->add(
-    wheel_count_for => {
-	car => 4,
-	bicycle => 2,
-    },
-    {
-	sortkeys => 1,
-    }
-);
+$generator->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, });
 ok($generator->create(), "Generate $package_name");
 $expected = <<EOT;
 package $package_name;
@@ -163,15 +139,7 @@ $generator->new_package(
 	package => $package_name,
 	readonly => 1,
 );
-$generator->add(
-    wheel_count_for => {
-	car => 4,
-	bicycle => 2,
-    },
-    {
-	sortkeys => 1,
-    }
-);
+$generator->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, });
 ok($generator->create(), "Generate $package_name");
 $expected = <<EOT;
 package $package_name;
@@ -196,15 +164,7 @@ $package_name = 'PackageNoReadonly';
 $generator->new_package(
 	package => $package_name,
 );
-$generator->add(
-    wheel_count_for => {
-	car => 4,
-	bicycle => 2,
-    },
-    {
-	sortkeys => 1,
-    }
-);
+$generator->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, });
 ok($generator->create(), "Generate $package_name");
 $expected = <<EOT;
 package $package_name;
