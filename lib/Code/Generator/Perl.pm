@@ -21,27 +21,32 @@ sub new {
 	$self->{generated_by} = $details{generated_by} || 'a script';
 
 	bless ($self, $class);
-
-	if (defined $details{use}) {
-	    foreach my $package (@{$details{use}}) {
-		$self->use($package);
-	    }
-	} else {
-	    $self->use('strict', 'warnings');
-	}
-
-	if ($self->{readonly}) {
-	    $self->_add_use('Readonly');
-	}
 	return $self;
 }
 
-sub use {
-    my ($self, $package) = @_;
-    $self->_add_use($package);
+sub _init_use {
+	my ($self) = @_;
+
+	my $uses = $self->{use};
+	if (defined $uses) {
+	    foreach my $package (@{$uses}) {
+		$self->use($package);
+	    }
+	} else {
+	    $self->use(qw/strict warnings/);
+	}
+
+	if ($self->{readonly}) {
+	    $self->use('Readonly');
+	}
 }
 
-sub _add_use {
+sub use {
+    my ($self, @packages) = @_;
+    map { $self->_add_if_not_yet_used($_) } @packages;
+}
+
+sub _add_if_not_yet_used {
     my ($self, $package) = @_;
     if (! grep { /$package/ } @{$self->{use}}) {
 	push @{$self->{use}}, $package;
@@ -52,11 +57,17 @@ sub new_package {
 	my ($self, %details) = @_;
 	$self->{outdir} = $details{outdir} || $self->{outdir};
 	$self->{package} = $details{package} || warn "new_package: No package given";
-	$self->{use} = $details{use} || [ 'strict', 'warnings' ];
+	$self->{use} = $details{use} || [];
+	$self->{generated_by} = $details{generated_by} if defined $details{generated_by};
+	unshift @{$self->{use}}, 'warnings' if ! defined $details{nowarnings};
+	unshift @{$self->{use}}, 'strict' if ! defined $details{nostrict};
+
 	if (defined $self->{base_package}) {
 		$self->{package} = join('::', $self->{base_package}, $self->{package});
 	}
 	$self->{content} = ();
+
+	$self->_init_use();
 }
 
 sub add_comment {
