@@ -55,9 +55,9 @@ sub _add_if_not_yet_used {
 }
 
 sub new_package {
-	my ($self, %details) = @_;
+	my ($self, $package_name, %details) = @_;
+	$self->{package} = $package_name || die "new_package: Missing package name";
 	$self->{outdir} = $details{outdir} || $self->{outdir};
-	$self->{package} = $details{package} || warn "new_package: No package given";
 	$self->{use} = $details{use} || [];
 	$self->{package_generated_by} = $details{generated_by};
 	unshift @{$self->{use}}, 'warnings' if ! defined $details{nowarnings};
@@ -212,7 +212,7 @@ Code::Generator::Perl - Perl module for generating perl modules
 
   my @fib_sequence = ( 1, 1, 2, 3, 5, 8 );
 
-  $generator->new_package(package => 'Fibonacci');
+  $generator->new_package('Fibonacci');
 
   $generator->add_comment('Single digit fibonacci numbers');
   $generator->add(fib_sequence => \@fib_sequence);
@@ -240,7 +240,7 @@ Code::Generator::Perl - Perl module for generating perl modules
   #     1;
 
   my @single_digit_numbers = ( 1..9 );
-  $generator->new_package(package => 'Number::Single::Digit');
+  $generator->new_package('Number::Single::Digit');
   $generator->add(single_digits => \@single_digit_numbers);
 
   # Generates Number/Single/Digit.pm
@@ -291,7 +291,7 @@ know which script generates your generated files.
 
 =back
 
-=item new_package(package => 'Package::Name', option => value)
+=item new_package('Package::Name', option => value, ...)
 
 Prepare the generator for creating a new package. Previous contents are cleared.
 Valid options are:

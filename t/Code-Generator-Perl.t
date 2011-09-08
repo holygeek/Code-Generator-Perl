@@ -33,7 +33,7 @@ my @fib_sequence = ( 1, 1, 2, 3, 5, 8 );
 
 $package_name = 'Fibonacci';
 ok($generator
-	->new_package(package => $package_name)
+	->new_package($package_name)
 	->add_comment('Single digit fibonacci numbers')
 	->add('sequence' => \@fib_sequence)
 	->create(), 'Generate toplevel module');
@@ -47,7 +47,7 @@ is_deeply(\@fib_sequence, $Fibonacci::sequence, 'Fibonacci sequence matches');
 
 my @single_digit_numbers = ( 1..9 );
 ok($generator
-	->new_package(package => 'Number::Single::Digit')
+	->new_package('Number::Single::Digit')
 	->add(single_digits => \@single_digit_numbers)
 	->create(),
 	'Generate nested module');
@@ -60,7 +60,7 @@ is_deeply(\@single_digit_numbers, $Number::Single::Digit::single_digits,
 
 diag('You can safely ignore the following error message:');
 ok(!$generator
-	->new_package(package => 'Broken')
+	->new_package('Broken')
 	->add('broken var name' => 42)
 	->create(),
 	'Barf on error');
@@ -70,7 +70,7 @@ my $wheel_count_for = { car => 4, bicycle => 2, };
 
 $package_name = 'CorrectOrdering';
 ok($generator
-	->new_package(package => $package_name)
+	->new_package($package_name)
 	->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, })
 	->create(),
 	"Generate $package_name.pm");
@@ -95,7 +95,7 @@ ok (compare_with_file($expected, "t/tmp/$package_name.pm"), 'Correct ordering');
 $package_name = 'UseNone';
 ok($generator
 	->new_package(
-		package => $package_name,
+		$package_name,
 		use => [],
 		nostrict => 1,
 		nowarnings => 1)
@@ -120,7 +120,7 @@ ok (compare_with_file($expected, "t/tmp/$package_name.pm"), 'Use none');
 $package_name = 'NewGeneratedBy';
 ok($generator
 	->new_package(
-		package => $package_name,
+		$package_name,
 		generated_by => 'space aliens')
 	->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, })
 	->create(),
@@ -146,7 +146,7 @@ ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_n
 $package_name = 'PackageReadonly';
 ok($generator
 	->new_package(
-		package => $package_name,
+		$package_name,
 		readonly => 1)
 	->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, })
 	->add(pi => 3.14)
@@ -175,7 +175,7 @@ ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_n
 
 $package_name = 'PackageNoReadonly';
 ok($generator
-	->new_package(package => $package_name)
+	->new_package($package_name)
 	->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, })
 	->add(pi => 3.14)
 	->create(),
@@ -202,7 +202,7 @@ ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_n
 
 $package_name = 'VariableReadonly';
 ok($generator
-	->new_package(package => $package_name)
+	->new_package($package_name)
 	->add_comment('This should be readonly')
 	->add(wheel_count_for => $wheel_count_for, {
 		sortkeys => 1,
@@ -239,7 +239,7 @@ ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_n
 $generator = new Code::Generator::Perl(readonly => 1, outdir => 't/tmp');
 $package_name = 'VariableOverrideGlobalReadonly';
 ok($generator
-	->new_package(package => $package_name)
+	->new_package($package_name)
 	->add_comment('This should be readonly')
 	->add(ten => 10)
 	->add_comment('This should not be readonly')
@@ -269,7 +269,7 @@ ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_n
 $generator = new Code::Generator::Perl(readonly => 1, outdir => 't/tmp');
 $package_name = 'PackageOverrideGlobalReadonly';
 ok($generator
-	->new_package(package => $package_name, readonly => 0)
+	->new_package($package_name, readonly => 0)
 	->add_comment('This should not be readonly')
 	->add(ten => 10)
 	->add_comment('This should not be readonly')
