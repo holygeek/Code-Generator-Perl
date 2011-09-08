@@ -31,12 +31,13 @@ my $generator = new Code::Generator::Perl(
 
 my @fib_sequence = ( 1, 1, 2, 3, 5, 8 );
 
-$generator->new_package(package => 'Fibonacci');
-$generator->add_comment('Single digit fibonacci numbers');
-$generator->add('sequence' => \@fib_sequence);
-ok($generator->create(), 'Generate toplevel module');
-
-use_ok('Fibonacci');
+$package_name = 'Fibonacci';
+ok($generator
+	->new_package(package => $package_name)
+	->add_comment('Single digit fibonacci numbers')
+	->add('sequence' => \@fib_sequence)
+	->create(), 'Generate toplevel module');
+use_ok($package_name);
 
 # is_deeply is enough testing but we want to avoid the "is used only once"
 # warning hence the length test:
@@ -45,9 +46,11 @@ ok(scalar @fib_sequence == scalar @{$Fibonacci::sequence},
 is_deeply(\@fib_sequence, $Fibonacci::sequence, 'Fibonacci sequence matches');
 
 my @single_digit_numbers = ( 1..9 );
-$generator->new_package(package => 'Number::Single::Digit');
-$generator->add(single_digits => \@single_digit_numbers);
-ok($generator->create(), 'Generate nested module');
+ok($generator
+	->new_package(package => 'Number::Single::Digit')
+	->add(single_digits => \@single_digit_numbers)
+	->create(),
+	'Generate nested module');
 
 use_ok('Number::Single::Digit');
 ok(scalar @single_digit_numbers == scalar @{$Number::Single::Digit::single_digits},
@@ -55,18 +58,22 @@ ok(scalar @single_digit_numbers == scalar @{$Number::Single::Digit::single_digit
 is_deeply(\@single_digit_numbers, $Number::Single::Digit::single_digits,
 		'Single digit numbers matches');
 
-$generator->new_package(package => 'Broken');
-$generator->add('broken var name' => 42);
 diag('You can safely ignore the following error message:');
-ok(!$generator->create(), 'Barf on error');
+ok(!$generator
+	->new_package(package => 'Broken')
+	->add('broken var name' => 42)
+	->create(),
+	'Barf on error');
 diag('You can now go back to not-ignoring any error messages from here onwards.');
 
 my $wheel_count_for = { car => 4, bicycle => 2, };
 
 $package_name = 'CorrectOrdering';
-$generator->new_package(package => $package_name);
-$generator->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, });
-ok($generator->create(), "Generate $package_name.pm");
+ok($generator
+	->new_package(package => $package_name)
+	->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, })
+	->create(),
+	"Generate $package_name.pm");
 $expected = <<EOT;
 package $package_name;
 
@@ -86,14 +93,15 @@ EOT
 ok (compare_with_file($expected, "t/tmp/$package_name.pm"), 'Correct ordering');
 
 $package_name = 'UseNone';
-$generator->new_package(
+ok($generator
+	->new_package(
 		package => $package_name,
 		use => [],
 		nostrict => 1,
-		nowarnings => 1
-);
-$generator->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, });
-ok($generator->create(), "Generate $package_name.pm");
+		nowarnings => 1)
+	->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, })
+	->create(),
+	"Generate $package_name.pm");
 $expected = <<EOT;
 package $package_name;
 
@@ -110,12 +118,13 @@ EOT
 ok (compare_with_file($expected, "t/tmp/$package_name.pm"), 'Use none');
 
 $package_name = 'NewGeneratedBy';
-$generator->new_package(
-	package => $package_name,
-	generated_by => 'space aliens',
-);
-$generator->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, });
-ok($generator->create(), "Generate $package_name");
+ok($generator
+	->new_package(
+		package => $package_name,
+		generated_by => 'space aliens')
+	->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, })
+	->create(),
+	"Generate $package_name");
 $expected = <<EOT;
 package $package_name;
 
@@ -135,12 +144,13 @@ EOT
 ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_name");
 
 $package_name = 'PackageReadonly';
-$generator->new_package(
-	package => $package_name,
-	readonly => 1,
-);
-$generator->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, });
-ok($generator->create(), "Generate $package_name");
+ok($generator
+	->new_package(
+		package => $package_name,
+		readonly => 1)
+	->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, })
+	->create(),
+	"Generate $package_name");
 $expected = <<EOT;
 package $package_name;
 
@@ -161,11 +171,11 @@ EOT
 ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_name");
 
 $package_name = 'PackageNoReadonly';
-$generator->new_package(
-	package => $package_name,
-);
-$generator->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, });
-ok($generator->create(), "Generate $package_name");
+ok($generator
+	->new_package(package => $package_name)
+	->add(wheel_count_for => $wheel_count_for, { sortkeys => 1, })
+	->create(),
+	"Generate $package_name");
 $expected = <<EOT;
 package $package_name;
 
