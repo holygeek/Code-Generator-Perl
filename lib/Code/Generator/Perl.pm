@@ -44,6 +44,7 @@ sub _init_use {
 sub use {
 	my ($self, @packages) = @_;
 	map { $self->_add_if_not_yet_used($_) } @packages;
+	return $self;
 }
 
 sub _add_if_not_yet_used {
@@ -70,11 +71,13 @@ sub new_package {
 	$self->{package_readonly} = $details{readonly} || 0;
 
 	$self->_init_use();
+	return $self;
 }
 
 sub add_comment {
 	my ($self, @comments) = @_;
 	$self->_add_content("# " . join("\n# ", @comments));
+	return $self;
 }
 
 sub add {
@@ -99,6 +102,7 @@ sub add {
 	} else {
 		$self->_add_content('our ' . $content);
 	}
+	return $self;
 }
 
 sub _add_content {
