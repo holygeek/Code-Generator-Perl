@@ -279,8 +279,9 @@ The base package to be prepended to the package name.
 
 =item readonly
 
-Set this to true if you would like the variables to be set to readonly using
-the Readonly module.
+Set this to true if you would like all the variables in all the packages to be
+generated to be readonly. This requires the Readonly module. You can overide
+this in per-package or per-variable readonly option.
 
 =item generated_by
 
@@ -289,9 +290,44 @@ know which script generates your generated files.
 
 =back
 
-=item new_package(package => 'Package::Name')
+=item new_package(package => 'Package::Name', option => value)
 
 Prepare the generator for creating a new package. Previous contents are cleared.
+Valid options are:
+
+=over 4
+
+=item outdir
+
+The output directory for this package.
+
+=item use
+
+An array ref to a list of other modules to use. By default 'strict' and
+'warnings' are included. Specify the 'nowarnings' and 'nostrict' if you don't
+want them (see below).
+
+=item nowarnings
+
+Exclude 'use warnings' if set to true.
+
+=item nostrict
+
+Exclude 'use strict' if set to true.
+
+=item package_generated_by
+
+Similar to 'generated_by' option to new but for this package only.
+
+=item base_package
+
+The base package name to be prepended to this package.
+
+=item package_readonly
+
+Set to 1 if you would like all variables in this package to be readonly.
+
+=back
 
 =item add_comment('some comment', 'another comment')
 
@@ -307,6 +343,10 @@ Add a variable with the given name, pointing to $ref. Options are:
 
 This value will be passed to I<$Data::Dumper::Sortkeys>. See the
 Data::Dumper documentation for how this value is used.
+
+=item readonly
+
+If set to 1 the variable will be set to readonly using the Readonly module.
 
 =back
 
