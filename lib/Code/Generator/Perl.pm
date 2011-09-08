@@ -37,37 +37,19 @@ sub add_comment {
 	$self->_add_content("# " . join("\n# ", @comments));
 }
 
-sub hash_keys_sorter {
-	my ($hash_ref) = @_;
-	my @keys = keys %$hash_ref;
-
-	# Assume all keys are numeric if one of them (picked at random) is
-	# and sort them numerically.  Don't fret if we get a false positive
-	# as this is only for presentation only.
-	if ($keys[0] =~ /^\d+$/) {
-		@keys = sort { $a <=> $b } @keys;
-	} else {
-		@keys = sort @keys;
-	}
-	return \@keys;
-}
-
 sub add {
 	my ($self, $name, $value, $options) = @_;
 	local $Data::Dumper::Indent = 1;
 	local $Data::Dumper::Purity = 1;
 	local $Data::Dumper::Deepcopy = 0;
-	if ($self->{readonly}) {
-		$Data::Dumper::Deepcopy = 1;
-	}
-	my $content;
-	if ($options->{sortkeys}) {
-		local $Data::Dumper::Sortkeys = \&hash_keys_sorter;
-		$content = Data::Dumper->Dump([$value], [$name]);
-	} else {
-		local $Data::Dumper::Sortkeys = 0;
-		$content = Data::Dumper->Dump([$value], [$name]);
-	}
+	local $Data::Dumper::Sortkeys = $options->{sortkeys} || 0;
+
+	# The moment we don't support per-variable readonly yet. It's either
+	# all or none.
+	local $Data::Dumper::Deepcopy = $self->{readonly};
+
+	my $content = Data::Dumper->Dump([$value], [$name]);
+
 	if ($self->{readonly}) {
 		$content =~ s/=/=>/;
 		$self->_add_content('Readonly::Scalar our ' . $content);
