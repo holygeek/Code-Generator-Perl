@@ -153,10 +153,10 @@ sub create {
 	$print_line->('1;');
 
 	$done->();
-	return $self->verify_package($package, $filename);
+	return $self->_verify_package($package, $filename);
 }
 
-sub verify_package {
+sub _verify_package {
 	my ($self, $package, $filename) = @_;
 	eval "use lib '" . $self->{outdir} . "';";
 	eval "use $package;";
