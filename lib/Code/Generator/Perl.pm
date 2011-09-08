@@ -133,7 +133,6 @@ sub create {
 	$print_line->("package $package;");
 	$print_line->();
 
-	my @uses;
 	foreach my $package (@{$self->{use}}) {
 		$print_line->("use $package;");
 	}
