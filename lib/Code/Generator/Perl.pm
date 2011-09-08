@@ -56,7 +56,8 @@ sub _add_if_not_yet_used {
 
 sub new_package {
 	my ($self, $package_name, %details) = @_;
-	$self->{package} = $package_name || die "new_package: Missing package name";
+	$self->{package} = $package_name
+		|| die "new_package: Missing package name";
 	$self->{outdir} = $details{outdir} || $self->{outdir};
 	$self->{use} = $details{use} || [];
 	$self->{package_generated_by} = $details{generated_by};
@@ -64,12 +65,15 @@ sub new_package {
 	unshift @{$self->{use}}, 'strict' if ! defined $details{nostrict};
 
 	if (defined $self->{base_package}) {
-		$self->{package} = join('::', $self->{base_package}, $self->{package});
+		$self->{package} = join('::',
+					$self->{base_package},
+					$self->{package});
 	}
 	$self->{content} = ();
 
 	$self->{package_readonly} = $self->{readonly};
-	$self->{package_readonly} = $details{readonly} if defined $details{readonly};
+	$self->{package_readonly} = $details{readonly}
+				    if defined $details{readonly};
 
 	$self->_init_use();
 	return $self;
@@ -89,7 +93,8 @@ sub add {
 	local $Data::Dumper::Sortkeys = $options->{sortkeys} || 0;
 
 	my $readonly = $self->{readonly};
-	$readonly = $self->{package_readonly} if defined $self->{package_readonly};
+	$readonly = $self->{package_readonly}
+		    if defined $self->{package_readonly};
 	$readonly = $options->{readonly} if defined $options->{readonly};
 
 	local $Data::Dumper::Deepcopy = $readonly;
@@ -135,9 +140,9 @@ sub create {
 	my $package = $self->{package};
 	if ($packages_created{$package}) {
 		croak join("\n",
-				"ERROR: Package $package has already been written before!",
-				"\tMost likely this is not what you want.",
-				"\tBailing out.",
+		     "ERROR: Package $package has already been written before!",
+		     "\tMost likely this is not what you want.",
+		     "\tBailing out.",
 		);
 	}
 	$packages_created{$package} = 1;
