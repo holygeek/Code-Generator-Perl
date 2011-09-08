@@ -6,7 +6,7 @@ use warnings;
 use Data::Dumper;
 use Carp;
 
-our %packages_created;
+my %packages_created;
 
 our $VERSION = '0.02';
 
