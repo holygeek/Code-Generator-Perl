@@ -6,6 +6,7 @@ use warnings;
 use Data::Dumper;
 use Carp;
 use File::Spec::Functions;
+use File::Path qw(make_path);
 
 my %packages_created;
 
@@ -133,6 +134,21 @@ sub get_line_printer_for {
 	);
 }
 
+sub _create_directory_or_die {
+	my ($outdir) = @_;
+
+	make_path($outdir, { error => \my $errors });
+	if (@$errors) {
+	    for my $diag (@$errors) {
+		my ($dir, $message) = %$diag;
+		# At most we're creating only one path so dying
+		# immediately is all dandy here. Should be no problem
+		# for immortals like us.
+		die "Error creating output directory '$outdir': $message";
+	    }
+	}
+}
+
 sub create {
 	my ($self) = @_;
 
@@ -153,7 +169,7 @@ sub create {
 	$filename = catfile($outdir, $filename . '.pm');
 
 	if (! -d $outdir) {
-		`mkdir -p $outdir`;
+		_create_directory_or_die($outdir);
 	}
 
 	my ($print_line, $done)= get_line_printer_for($filename);

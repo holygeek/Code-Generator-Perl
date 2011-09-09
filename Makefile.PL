@@ -8,6 +8,7 @@ WriteMakefile(
     PREREQ_PM         => {
 	'Data::Dumper' => 2.121,
 	'File::Spec'   => 3.29,
+	'File::Path'   => 2.07,
     },
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Code/Generator/Perl.pm', # retrieve abstract from module
