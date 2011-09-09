@@ -117,7 +117,7 @@ sub _add_content {
 	push @{$self->{content}}, $content;
 }
 
-sub get_line_printer_for {
+sub _get_line_printer_for {
 	my ($filename) = @_;
 
 	open my $file, ">$filename" or die "Could not open $filename\n";
@@ -172,7 +172,7 @@ sub create {
 		_create_directory_or_die($outdir);
 	}
 
-	my ($print_line, $done)= get_line_printer_for($filename);
+	my ($print_line, $done)= _get_line_printer_for($filename);
 	$print_line->("package $package;");
 	$print_line->();
 
