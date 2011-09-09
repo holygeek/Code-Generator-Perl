@@ -170,7 +170,7 @@ sub _get_outdir_and_filename {
 }
 
 sub create {
-	my ($self) = @_;
+	my ($self, $options) = @_;
 
 	my $package = $self->{package};
 	if ($packages_created{$package}) {
@@ -207,11 +207,11 @@ sub create {
 
 	$print_line->('1;');
 	$done->();
-	return $self->_verify_package($package, $filename);
+	return $self->_verify_package($package, $filename, $options);
 }
 
 sub _verify_package {
-	my ($self, $package, $filename) = @_;
+	my ($self, $package, $filename, $options) = @_;
 
 	eval "use lib '" . $self->{outdir} . "';";
 	eval "use $package;";
@@ -219,18 +219,18 @@ sub _verify_package {
 		warn "Error while generating $filename:\n\t$@";
 		return 0;
 	} else {
-		if ($ENV{verbose}) {
-			print STDERR "$filename\n";
+		if ($options->{verbose}) {
+			print "$filename\n";
 		}
 	}
 	return 1;
 }
 
 sub create_or_die {
-	my ($self, $die_message) = shift;
+	my ($self, $die_message, $options) = @_;
 
 	$die_message ||= '';
-	if (! $self->create()) {
+	if (! $self->create($options)) {
 		die "$die_message $!";
 	}
 }
@@ -393,14 +393,32 @@ If set to 1 the variable will be set to readonly using the Readonly module.
 Add "use Foo;", "use Bar;" and so on to the package. It ensures that no
 packages are used twice.
 
-=item I<create>()
+=item I<create>( { option => value } )
 
 Write the package into .pm file and try to 'use' it and warn if there is any
-syntax errors.
+syntax errors. Options:
 
-=item I<create_or_die>()
+=over 4
+
+=item I<verbose>
+
+If set to true the package filename is printed to stdout.
+
+=back
+
+=item I<create_or_die>( $die_message, { option => value } )
 
 Same like I<create>() but die on any syntax error in the created package.
+If given, I<$die_message> will be printed if the package fails perl's eval.
+Options:
+
+=over 4
+
+=item I<verbose>
+
+If set to true the package filename is printed to stdout.
+
+=back
 
 =back
 
