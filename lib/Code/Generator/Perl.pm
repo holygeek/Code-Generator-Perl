@@ -14,6 +14,7 @@ our $VERSION = '0.02';
 
 sub new {
 	my ($class, %details) = @_;
+
 	my $self = {};
 	$self->{outdir} = $details{outdir} || '.';
 	$self->{base_package} = $details{base_package};
@@ -44,12 +45,14 @@ sub _init_use {
 
 sub use {
 	my ($self, @packages) = @_;
+
 	map { $self->_add_if_not_yet_used($_) } @packages;
 	return $self;
 }
 
 sub _add_if_not_yet_used {
     my ($self, $package) = @_;
+
     if (! grep { /$package/ } @{$self->{use}}) {
 	push @{$self->{use}}, $package;
     }
@@ -57,6 +60,7 @@ sub _add_if_not_yet_used {
 
 sub new_package {
 	my ($self, $package_name, %details) = @_;
+
 	$self->{package} = $package_name
 		|| die "new_package: Missing package name";
 	$self->{outdir} = $details{outdir} || $self->{outdir};
@@ -82,12 +86,14 @@ sub new_package {
 
 sub add_comment {
 	my ($self, @comments) = @_;
+
 	$self->_add_content("# " . join("\n# ", @comments));
 	return $self;
 }
 
 sub add {
 	my ($self, $name, $value, $options) = @_;
+
 	local $Data::Dumper::Indent = 1;
 	local $Data::Dumper::Purity = 1;
 	local $Data::Dumper::Deepcopy = 0;
@@ -114,6 +120,7 @@ sub add {
 
 sub _add_content {
 	my ($self, $content) = @_;
+
 	push @{$self->{content}}, $content;
 }
 
@@ -205,6 +212,7 @@ sub create {
 
 sub _verify_package {
 	my ($self, $package, $filename) = @_;
+
 	eval "use lib '" . $self->{outdir} . "';";
 	eval "use $package;";
 	if ($@) {
@@ -220,6 +228,7 @@ sub _verify_package {
 
 sub create_or_die {
 	my ($self, $die_message) = shift;
+
 	$die_message ||= '';
 	if (! $self->create()) {
 		die "$die_message $!";
