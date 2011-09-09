@@ -328,4 +328,15 @@ chomp $message;
 ok ($message eq "t/tmp/$package_name.pm", "$package_name");
 #:}
 
+$package_name = 'CreateOrDieVerbose'; #{:
+$message = `perl -Mblib -MCode::Generator::Perl -e '
+new Code::Generator::Perl(outdir => "t/tmp")
+  ->new_package("$package_name")
+  ->add(pi => 3.14)
+  ->create_or_die( "die message", { verbose => 1 } );
+'`;
+chomp $message;
+ok ($message eq "t/tmp/$package_name.pm", "$package_name");
+#:}
+
 # vim:fdm=marker foldmarker={\:,\:}:
