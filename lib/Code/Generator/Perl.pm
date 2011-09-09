@@ -10,7 +10,7 @@ use File::Path qw(make_path);
 
 my %packages_created;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03'; # Don't forget to update the one in POD too!
 
 sub new {
 	my ($class, %details) = @_;
@@ -240,6 +240,10 @@ __END__
 =head1 NAME
 
 Code::Generator::Perl - Perl module for generating perl modules
+
+=head1 VERSION
+
+0.03
 
 =head1 SYNOPSIS
 
