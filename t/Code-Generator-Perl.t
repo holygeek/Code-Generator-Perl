@@ -43,7 +43,9 @@ use_ok($package_name);
 # warning hence the length test:
 ok(scalar @fib_sequence == scalar @{$Fibonacci::sequence},
 	'Same lengths of Fibonacci sequences');
-is_deeply(\@fib_sequence, $Fibonacci::sequence, 'Fibonacci sequence matches');#:}
+is_deeply(\@fib_sequence, $Fibonacci::sequence,
+	'Fibonacci sequence matches');
+#:}
 
 $package_name = 'Number::Single::Digit';#{:
 my @single_digit_numbers = ( 1..9 );
@@ -54,10 +56,12 @@ ok($generator
 	"Generate $package_name");
 
 use_ok($package_name);
-ok(scalar @single_digit_numbers == scalar @{$Number::Single::Digit::single_digits},
+ok(scalar @single_digit_numbers
+    == scalar @{$Number::Single::Digit::single_digits},
 	'Same lengths of single digit numbers');
 is_deeply(\@single_digit_numbers, $Number::Single::Digit::single_digits,
-		'Single digit numbers matches');#:}
+		'Single digit numbers matches');
+#:}
 
 $package_name = 'Broken';#{:
 diag('You can safely ignore the following error message:');
@@ -66,7 +70,8 @@ ok(!$generator
 	->add('broken var name' => 42)
 	->create(),
 	'Barf on error');
-diag('You can now go back to not-ignoring any error messages from here onwards.');#:}
+diag('You can now go back to not-ignoring any error messages from here onwards.');
+#:}
 
 my $wheel_count_for = { car => 4, bicycle => 2, };
 
@@ -92,7 +97,8 @@ our \$wheel_count_for = {
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"), 'Correct ordering');#:}
+ok (compare_with_file($expected, "t/tmp/$package_name.pm"), 'Correct ordering');
+#:}
 
 $package_name = 'UseNone';#{:
 ok($generator
@@ -117,7 +123,8 @@ our \$wheel_count_for = {
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"), 'Use none');#:}
+ok (compare_with_file($expected, "t/tmp/$package_name.pm"), 'Use none');
+#:}
 
 $package_name = 'NewGeneratedBy';#{:
 ok($generator
@@ -143,7 +150,9 @@ our \$wheel_count_for = {
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_name");#:}
+ok (compare_with_file($expected, "t/tmp/$package_name.pm"),
+	"Generate $package_name");
+#:}
 
 $package_name = 'PackageReadonly';#{:
 ok($generator
@@ -173,7 +182,9 @@ Readonly::Scalar our \$pi => '3.14';
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_name");#:}
+ok (compare_with_file($expected, "t/tmp/$package_name.pm"),
+	"Generate $package_name");
+#:}
 
 $package_name = 'PackageNoReadonly';#{:
 ok($generator
@@ -200,7 +211,9 @@ our \$pi = '3.14';
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_name");#:}
+ok (compare_with_file($expected, "t/tmp/$package_name.pm"),
+	"Generate $package_name");
+#:}
 
 $package_name = 'VariableReadonly';#{:
 ok($generator
@@ -236,7 +249,9 @@ our \$pi = '3.14';
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_name");#:}
+ok (compare_with_file($expected, "t/tmp/$package_name.pm"),
+	"Generate $package_name");
+#:}
 
 $package_name = 'VariableOverrideGlobalReadonly';#{:
 $generator = new Code::Generator::Perl(readonly => 1, outdir => 't/tmp');
@@ -266,7 +281,9 @@ our \$twenty = 20;
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_name");#:}
+ok (compare_with_file($expected, "t/tmp/$package_name.pm"),
+	"Generate $package_name");
+#:}
 
 $package_name = 'PackageOverrideGlobalReadonly';#{:
 $generator = new Code::Generator::Perl(readonly => 1, outdir => 't/tmp');
@@ -296,6 +313,8 @@ our \$twenty = 20;
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"), "Generate $package_name");#:}
+ok (compare_with_file($expected, "t/tmp/$package_name.pm"),
+	"Generate $package_name");
+#:}
 
 # vim:fdm=marker foldmarker={\:,\:}:
