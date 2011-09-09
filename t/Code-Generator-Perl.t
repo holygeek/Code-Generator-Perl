@@ -36,7 +36,7 @@ ok($generator
 	->new_package($package_name)
 	->add_comment('Single digit fibonacci numbers')
 	->add('sequence' => \@fib_sequence)
-	->create(), 'Generate toplevel module');
+	->create(), "Generate $package_name");
 use_ok($package_name);
 
 # is_deeply is enough testing but we want to avoid the "is used only once"
@@ -45,22 +45,24 @@ ok(scalar @fib_sequence == scalar @{$Fibonacci::sequence},
 	'Same lengths of Fibonacci sequences');
 is_deeply(\@fib_sequence, $Fibonacci::sequence, 'Fibonacci sequence matches');
 
+$package_name = 'Number::Single::Digit';
 my @single_digit_numbers = ( 1..9 );
 ok($generator
-	->new_package('Number::Single::Digit')
+	->new_package($package_name)
 	->add(single_digits => \@single_digit_numbers)
 	->create(),
-	'Generate nested module');
+	"Generate $package_name");
 
-use_ok('Number::Single::Digit');
+use_ok($package_name);
 ok(scalar @single_digit_numbers == scalar @{$Number::Single::Digit::single_digits},
 	'Same lengths of single digit numbers');
 is_deeply(\@single_digit_numbers, $Number::Single::Digit::single_digits,
 		'Single digit numbers matches');
 
+$package_name = 'Broken';
 diag('You can safely ignore the following error message:');
 ok(!$generator
-	->new_package('Broken')
+	->new_package($package_name)
 	->add('broken var name' => 42)
 	->create(),
 	'Barf on error');
