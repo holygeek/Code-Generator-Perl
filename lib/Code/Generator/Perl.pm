@@ -149,10 +149,22 @@ sub _create_directory_or_die {
 	}
 }
 
-sub create {
+sub _get_outdir_and_filename {
 	my ($self) = @_;
 
 	my $outdir = $self->{outdir};
+	my @dir = split('::', $self->{package});
+	my $filename = pop @dir;
+
+	$outdir = catfile($outdir, @dir);
+	$filename = catfile($outdir, $filename . '.pm');
+
+	return ($outdir, $filename);
+}
+
+sub create {
+	my ($self) = @_;
+
 	my $package = $self->{package};
 	if ($packages_created{$package}) {
 		croak join("\n",
@@ -163,10 +175,7 @@ sub create {
 	}
 	$packages_created{$package} = 1;
 
-	my @dir = split('::', $self->{package});
-	my $filename = pop @dir;
-	$outdir = catfile($outdir, @dir);
-	$filename = catfile($outdir, $filename . '.pm');
+	my ($outdir, $filename) = $self->_get_outdir_and_filename();
 
 	if (! -d $outdir) {
 		_create_directory_or_die($outdir);
