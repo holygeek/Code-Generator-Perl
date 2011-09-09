@@ -236,16 +236,14 @@ Code::Generator::Perl - Perl module for generating perl modules
 
   use Code::Generator::Perl;
 
-  my $generator = new Code::Generator::Perl(
-			generated_by => 'somescript.pl',
-  );
+  my $generator = new Code::Generator::Perl(generated_by => 'somescript.pl');
 
   my @fib_sequence = ( 1, 1, 2, 3, 5, 8 );
 
-  $generator->new_package('Fibonacci');
+  $generator->new_package( 'Fibonacci' );
 
-  $generator->add_comment('Single digit fibonacci numbers');
-  $generator->add(fib_sequence => \@fib_sequence);
+  $generator->add_comment( 'Single digit fibonacci numbers' );
+  $generator->add( fib_sequence => \@fib_sequence );
   $generator->create_or_die();
   # This will generate the file Fibonacci.pm:
   #
@@ -270,7 +268,7 @@ Code::Generator::Perl - Perl module for generating perl modules
   #     1;
 
   my @single_digit_numbers = ( 1..9 );
-  $generator->new_package('Number::Single::Digit');
+  $generator->new_package( 'Number::Single::Digit' );
   $generator->add(single_digits => \@single_digit_numbers);
 
   # Generates Number/Single/Digit.pm
@@ -281,7 +279,7 @@ Code::Generator::Perl - Perl module for generating perl modules
 Code::Generator::Perl generates perl modules for you.
 
 The idea is that you specify the module name and what variables it has and it
-will spit out the .pm files for you, using Data::Dumper to do the actual
+will spit out the .pm files for you, using I<Data::Dumper> to do the actual
 nitty-gritty work.
 
 It was born out of the need to generate perl modules for representing static
@@ -294,98 +292,112 @@ joins to come up with the same data.
 
 =over 4
 
-=item new(option => value, ...)
+=item I<new>( option => value, ... )
 
 Creates the generator object.  Available options are
 
 =over 4
 
-=item outdir
+=item I<outdir>
 
 Specifies the directory where the generated files will be saved to.
 
-=item base_package
+=item I<base_package>
 
 The base package to be prepended to the package name.
 
-=item readonly
+=item I<readonly>
 
 Set this to true if you would like all the variables in all the packages to be
 generated to be readonly. This requires the Readonly module. You can overide
 this in per-package or per-variable readonly option.
 
-=item generated_by
+=item I<generated_by>
 
 Set this to the name of your script so that people that view the generated file
 know which script generates your generated files.
 
 =back
 
-=item new_package('Package::Name', option => value, ...)
+=item I<new_package>( 'Package::Name', option => value, ... )
 
 Prepare the generator for creating a new package. Previous contents are cleared.
 Valid options are:
 
 =over 4
 
-=item outdir
+=item I<outdir>
 
 The output directory for this package.
 
-=item use
+=item I<use>
 
 An array ref to a list of other modules to use. By default 'strict' and
 'warnings' are included. Specify the 'nowarnings' and 'nostrict' if you don't
 want them (see below).
 
-=item nowarnings
+=item I<nowarnings>
 
 Exclude 'use warnings' if set to true.
 
-=item nostrict
+=item I<nostrict>
 
 Exclude 'use strict' if set to true.
 
-=item package_generated_by
+=item I<package_generated_by>
 
 Similar to 'generated_by' option to new but for this package only.
 
-=item base_package
+=item I<base_package>
 
 The base package name to be prepended to this package.
 
-=item package_readonly
+=item I<package_readonly>
 
 Set to 1 if you would like all variables in this package to be readonly.
 
 =back
 
-=item add_comment('some comment', 'another comment')
+=item I<add_comment>( 'some comment', 'another comment' )
 
 Add comments. They will be joined with newlines.
 
-=item add(variable_name => $ref, { option => value })
+=item I<add>( variable_name => $ref, { option => value } )
 
 Add a variable with the given name, pointing to $ref. Options are:
 
 =over 4
 
-=item sortkeys
+=item I<sortkeys>
 
 This value will be passed to I<$Data::Dumper::Sortkeys>. See the
-Data::Dumper documentation for how this value is used.
+L<Data::Dumper> documentation for how this value is used.
 
-=item readonly
+=item I<readonly>
 
 If set to 1 the variable will be set to readonly using the Readonly module.
 
 =back
 
+=item I<use>( 'Foo', 'Bar', ... )
+
+Add "use Foo;", "use Bar;" and so on to the package. It ensures that no
+packages are used twice.
+
+=item I<create>()
+
+Write the package into .pm file and try to 'use' it and warn if there is any
+syntax errors.
+
+=item I<create_or_die>()
+
+Same like I<create>() but die on any syntax error in the created package.
+
 =back
 
 =head1 SEE ALSO
 
-Data::Dumper
+L<Data::Dumper>
 
 =head1 AUTHOR
 
