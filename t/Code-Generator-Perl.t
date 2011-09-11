@@ -5,14 +5,18 @@ my $outdir;
 BEGIN {
     use_ok('Code::Generator::Perl');
     $outdir = 't/tmp';
+
+    if (!eval q{ use Test::Differences; 1 }) {
+	    *eq_or_diff = \&is_deeply;
+    }
 };
 use lib $outdir;
 
 my $expected;
 my $package_name;
 
-sub compare_with_file {
-    my ($expected, $filename) = @_;
+sub ok_compare_with_file {
+    my ($expected, $filename, $message) = @_;
 
     my $file_content;
     local $/;
@@ -20,7 +24,7 @@ sub compare_with_file {
     $file_content = <$output>;
     close $output;
 
-    return $expected eq $file_content;
+    eq_or_diff($expected, $file_content, $message);
 }
 
 
@@ -109,7 +113,7 @@ our \$wheel_count_for = {
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"), 'Correct ordering');
+ok_compare_with_file($expected, "t/tmp/$package_name.pm", 'Correct ordering');
 #:}
 
 $package_name = 'UseNone';#{:
@@ -135,7 +139,7 @@ our \$wheel_count_for = {
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"), 'Use none');
+ok_compare_with_file($expected, "t/tmp/$package_name.pm", 'Use none');
 #:}
 
 $package_name = 'NewGeneratedBy';#{:
@@ -162,7 +166,7 @@ our \$wheel_count_for = {
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"),
+ok_compare_with_file($expected, "t/tmp/$package_name.pm",
 	"Generate $package_name");
 #:}
 
@@ -194,7 +198,7 @@ Readonly::Scalar our \$pi => '3.14';
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"),
+ok_compare_with_file($expected, "t/tmp/$package_name.pm",
 	"Generate $package_name");
 #:}
 
@@ -223,7 +227,7 @@ our \$pi = '3.14';
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"),
+ok_compare_with_file($expected, "t/tmp/$package_name.pm",
 	"Generate $package_name");
 #:}
 
@@ -261,7 +265,7 @@ our \$pi = '3.14';
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"),
+ok_compare_with_file($expected, "t/tmp/$package_name.pm",
 	"Generate $package_name");
 #:}
 
@@ -293,7 +297,7 @@ our \$twenty = 20;
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"),
+ok_compare_with_file($expected, "t/tmp/$package_name.pm",
 	"Generate $package_name");
 #:}
 
@@ -325,7 +329,7 @@ our \$twenty = 20;
 
 1;
 EOT
-ok (compare_with_file($expected, "t/tmp/$package_name.pm"),
+ok_compare_with_file($expected, "t/tmp/$package_name.pm",
 	"Generate $package_name");
 #:}
 
