@@ -1,7 +1,9 @@
 Code-Generator-Perl version 0.02
 ================================
 
-Code::Generator::Perl is a perl module to generate perl modules.
+Code::Generator::Perl is a perl module for generating perl modules.
+
+It only support the generation of perl modules that contain only scalars.
 
 INSTALLATION
 
