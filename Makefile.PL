@@ -14,4 +14,5 @@ WriteMakefile(
       (ABSTRACT_FROM  => 'lib/Code/Generator/Perl.pm', # retrieve abstract from module
        AUTHOR         => 'nazri <nazri@>') : ()),
     clean             => { FILES => 't/tmp' },
+    LICENSE           => 'perl',
 );
