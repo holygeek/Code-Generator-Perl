@@ -6,6 +6,9 @@ WriteMakefile(
     NAME              => 'Code::Generator::Perl',
     VERSION_FROM      => 'lib/Code/Generator/Perl.pm', # finds $VERSION
     PREREQ_PM         => {
+	# These are the versions that happen to be in my local site perl.
+	# Change these to suit your need, please report back if it works fine.
+	# I'm too lazy to check the specific requirement at the moment.
 	'Data::Dumper' => 2.121,
 	'File::Spec'   => 3.29,
 	'File::Path'   => 2.07,
