@@ -64,13 +64,25 @@ is_deeply(\@single_digit_numbers, $Number::Single::Digit::single_digits,
 #:}
 
 $package_name = 'Broken';#{:
-diag('You can safely ignore the following error message:');
-ok(!$generator
-	->new_package($package_name)
-	->add('broken var name' => 42)
-	->create(),
-	'Barf on error');
-diag('You can now go back to not-ignoring any error messages from here onwards.');
+SKIP: {
+    eval { require Test::Output };
+    skip "Need Test::Output", 1 if $@;
+
+    $expected = <<'EOF';
+Bareword found where operator expected at t/tmp/Broken.pm line 9, near "$broken var"
+	(Missing operator before var?)
+Error while generating t/tmp/Broken.pm:
+	syntax error at t/tmp/Broken.pm line 9, near "$broken var name "
+Compilation failed in require at (eval 30) line 1.
+BEGIN failed--compilation aborted at (eval 30) line 1.
+EOF
+    Test::Output::stderr_is (sub {
+	$generator
+	    ->new_package($package_name)
+	    ->add('broken var name' => 42)
+	    ->create();
+    }, $expected, 'Barf on error');
+}
 #:}
 
 my $wheel_count_for = { car => 4, bicycle => 2, };
