@@ -213,8 +213,12 @@ sub create {
 sub _verify_package {
 	my ($self, $package, $filename, $options) = @_;
 
-	eval "use lib '" . $self->{outdir} . "';";
-	eval "use $package;";
+	my $outdir = $self->{outdir};
+
+	eval <<"	EOF";
+	use lib '$outdir';
+	use $package;
+	EOF
 	if ($@) {
 		warn "Error while generating $filename:\n\t$@";
 		return 0;

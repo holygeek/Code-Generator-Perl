@@ -73,8 +73,8 @@ Bareword found where operator expected at t/tmp/Broken.pm line 9, near "$broken 
 	(Missing operator before var?)
 Error while generating t/tmp/Broken.pm:
 	syntax error at t/tmp/Broken.pm line 9, near "$broken var name "
-Compilation failed in require at (eval 30) line 1.
-BEGIN failed--compilation aborted at (eval 30) line 1.
+Compilation failed in require at (eval 29) line 2.
+BEGIN failed--compilation aborted at (eval 29) line 2.
 EOF
     Test::Output::stderr_is (sub {
 	$generator
