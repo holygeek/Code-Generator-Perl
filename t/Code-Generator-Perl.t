@@ -24,7 +24,7 @@ sub compare_with_file {
 }
 
 
-my $generator = new Code::Generator::Perl(
+my $generator = Code::Generator::Perl->new(
 			outdir => $outdir,
 			generated_by => 't/Code-Generator-Perl.t',
 );
