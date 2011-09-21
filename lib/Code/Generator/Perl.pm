@@ -127,7 +127,7 @@ sub _add_content {
 sub _get_line_printer_for {
 	my ($filename) = @_;
 
-	open my $file, ">$filename" or die "Could not open $filename\n";
+	open my $file, '>', $filename or die "Could not open $filename\n";
 
 	return (
 		sub {
