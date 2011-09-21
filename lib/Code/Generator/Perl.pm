@@ -227,6 +227,10 @@ sub _verify_package {
 			print "$filename\n";
 		}
 	}
+	eval <<"	EOF";
+	no lib '$outdir';
+	no $package;
+	EOF
 	return 1;
 }
 
