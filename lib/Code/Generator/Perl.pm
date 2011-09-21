@@ -257,7 +257,7 @@ Code::Generator::Perl - Perl module for generating perl modules
 
   use Code::Generator::Perl;
 
-  my $generator = new Code::Generator::Perl(generated_by => 'somescript.pl');
+  my $generator = Code::Generator::Perl->new(generated_by => 'somescript.pl');
 
   my @fib_sequence = ( 1, 1, 2, 3, 5, 8 );
 
