@@ -10,241 +10,243 @@ use File::Path qw(make_path);
 
 my %packages_created;
 
-our $VERSION = '0.03'; # Don't forget to update the one in POD too!
+our $VERSION = '0.03';    # Don't forget to update the one in POD too!
 
 sub new {
-	my ($class, %details) = @_;
+    my ($class, %details) = @_;
 
-	my $self = {};
-	$self->{outdir} = $details{outdir} || '.';
-	$self->{base_package} = $details{base_package};
-	$self->{readonly} = $details{readonly} || 0;
-	$self->{content} = ();
-	$self->{generated_by} = $details{generated_by} || 'a script';
+    my $self = {};
+    $self->{outdir}       = $details{outdir} || '.';
+    $self->{base_package} = $details{base_package};
+    $self->{readonly}     = $details{readonly} || 0;
+    $self->{content}      = ();
+    $self->{generated_by} = $details{generated_by} || 'a script';
 
-	bless ($self, $class);
-	return $self;
+    bless($self, $class);
+    return $self;
 }
 
 sub _init_use {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $uses = $self->{use};
-	if (defined $uses) {
-	    foreach my $package (@{$uses}) {
-		$self->use($package);
-	    }
-	} else {
-	    $self->use(qw/strict warnings/);
-	}
+    my $uses = $self->{use};
+    if (defined $uses) {
+        foreach my $package (@{$uses}) {
+            $self->use($package);
+        }
+    }
+    else {
+        $self->use(qw/strict warnings/);
+    }
 
-	if ($self->{readonly} || $self->{package_readonly}) {
-	    $self->use('Readonly');
-	}
+    if ($self->{readonly} || $self->{package_readonly}) {
+        $self->use('Readonly');
+    }
 }
 
 sub use {
-	my ($self, @packages) = @_;
+    my ($self, @packages) = @_;
 
-	map { $self->_add_if_not_yet_used($_) } @packages;
-	return $self;
+    map { $self->_add_if_not_yet_used($_) } @packages;
+    return $self;
 }
 
 sub _add_if_not_yet_used {
     my ($self, $package) = @_;
 
-    if (! grep { /$package/ } @{$self->{use}}) {
-	push @{$self->{use}}, $package;
+    if (!grep {/$package/} @{$self->{use}}) {
+        push @{$self->{use}}, $package;
     }
 }
 
 sub new_package {
-	my ($self, $package_name, %details) = @_;
+    my ($self, $package_name, %details) = @_;
 
-	$self->{package} = $package_name
-		|| die "new_package: Missing package name";
-	$self->{outdir} = $details{outdir} || $self->{outdir};
-	$self->{use} = $details{use} || [];
-	$self->{package_generated_by} = $details{generated_by};
-	unshift @{$self->{use}}, 'warnings' if ! defined $details{nowarnings};
-	unshift @{$self->{use}}, 'strict' if ! defined $details{nostrict};
+    $self->{package} = $package_name
+      || die "new_package: Missing package name";
+    $self->{outdir} = $details{outdir} || $self->{outdir};
+    $self->{use}    = $details{use}    || [];
+    $self->{package_generated_by} = $details{generated_by};
+    unshift @{$self->{use}}, 'warnings' if !defined $details{nowarnings};
+    unshift @{$self->{use}}, 'strict'   if !defined $details{nostrict};
 
-	if (defined $self->{base_package}) {
-		$self->{package} = join('::',
-					$self->{base_package},
-					$self->{package});
-	}
-	$self->{content} = ();
+    if (defined $self->{base_package}) {
+        $self->{package} = join('::', $self->{base_package}, $self->{package});
+    }
+    $self->{content} = ();
 
-	$self->{package_readonly} = $self->{readonly};
-	$self->{package_readonly} = $details{readonly}
-				    if defined $details{readonly};
+    $self->{package_readonly} = $self->{readonly};
+    $self->{package_readonly} = $details{readonly}
+      if defined $details{readonly};
 
-	$self->_init_use();
-	return $self;
+    $self->_init_use();
+    return $self;
 }
 
 sub add_comment {
-	my ($self, @comments) = @_;
+    my ($self, @comments) = @_;
 
-	$self->_add_content("# " . join("\n# ", @comments));
-	return $self;
+    $self->_add_content("# " . join("\n# ", @comments));
+    return $self;
 }
 
 sub add {
-	my ($self, $name, $value, $options) = @_;
+    my ($self, $name, $value, $options) = @_;
 
-	local $Data::Dumper::Indent = 1;
-	local $Data::Dumper::Purity = 1;
-	local $Data::Dumper::Deepcopy = 0;
-	local $Data::Dumper::Sortkeys = $options->{sortkeys} || 0;
+    local $Data::Dumper::Indent   = 1;
+    local $Data::Dumper::Purity   = 1;
+    local $Data::Dumper::Deepcopy = 0;
+    local $Data::Dumper::Sortkeys = $options->{sortkeys} || 0;
 
-	my $readonly = $self->{readonly};
-	$readonly = $self->{package_readonly}
-		    if defined $self->{package_readonly};
-	$readonly = $options->{readonly} if defined $options->{readonly};
+    my $readonly = $self->{readonly};
+    $readonly = $self->{package_readonly}
+      if defined $self->{package_readonly};
+    $readonly = $options->{readonly} if defined $options->{readonly};
 
-	local $Data::Dumper::Deepcopy = $readonly;
+    local $Data::Dumper::Deepcopy = $readonly;
 
-	my $content = Data::Dumper->Dump([$value], [$name]);
+    my $content = Data::Dumper->Dump([$value], [$name]);
 
-	if ($readonly) {
-		$self->use('Readonly');
-		$content =~ s/=/=>/;
-		$self->_add_content('Readonly::Scalar our ' . $content);
-	} else {
-		$self->_add_content('our ' . $content);
-	}
-	return $self;
+    if ($readonly) {
+        $self->use('Readonly');
+        $content =~ s/=/=>/;
+        $self->_add_content('Readonly::Scalar our ' . $content);
+    }
+    else {
+        $self->_add_content('our ' . $content);
+    }
+    return $self;
 }
 
 sub _add_content {
-	my ($self, $content) = @_;
+    my ($self, $content) = @_;
 
-	push @{$self->{content}}, $content;
+    push @{$self->{content}}, $content;
 }
 
 sub _get_line_printer_for {
-	my ($filename) = @_;
+    my ($filename) = @_;
 
-	open my $file, '>', $filename or die "Could not open $filename\n";
+    open my $file, '>', $filename or die "Could not open $filename\n";
 
-	return (
-		sub {
-			my ($str) = @_;
-			$str ||= '';
-			print $file "$str\n";
-		},
-		sub {
-			close $file;
-		},
-	);
+    return (
+        sub {
+            my ($str) = @_;
+            $str ||= '';
+            print $file "$str\n";
+        },
+        sub {
+            close $file;
+        },
+    );
 }
 
 sub _create_directory_or_die {
-	my ($outdir) = @_;
+    my ($outdir) = @_;
 
-	make_path($outdir, { error => \my $errors });
-	if (@$errors) {
-	    for my $diag (@$errors) {
-		my ($dir, $message) = %$diag;
-		# At most we're creating only one path so dying
-		# immediately is all dandy here. Should be no problem
-		# for immortals like us.
-		die "Error creating output directory '$outdir': $message";
-	    }
-	}
+    make_path($outdir, {error => \my $errors});
+    if (@$errors) {
+        for my $diag (@$errors) {
+            my ($dir, $message) = %$diag;
+
+            # At most we're creating only one path so dying
+            # immediately is all dandy here. Should be no problem
+            # for immortals like us.
+            die "Error creating output directory '$outdir': $message";
+        }
+    }
 }
 
 sub _get_outdir_and_filename {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $outdir = $self->{outdir};
-	my @dir = split('::', $self->{package});
-	my $filename = pop @dir;
+    my $outdir   = $self->{outdir};
+    my @dir      = split('::', $self->{package});
+    my $filename = pop @dir;
 
-	$outdir = catfile($outdir, @dir);
-	$filename = catfile($outdir, $filename . '.pm');
+    $outdir   = catfile($outdir, @dir);
+    $filename = catfile($outdir, $filename . '.pm');
 
-	return ($outdir, $filename);
+    return ($outdir, $filename);
 }
 
 sub create {
-	my ($self, $options) = @_;
+    my ($self, $options) = @_;
 
-	my $package = $self->{package};
-	if ($packages_created{$package}) {
-		croak join("\n",
-		     "ERROR: Package $package has already been written before!",
-		     "\tMost likely this is not what you want.",
-		     "\tBailing out.",
-		);
-	}
-	$packages_created{$package} = 1;
+    my $package = $self->{package};
+    if ($packages_created{$package}) {
+        croak join("\n",
+            "ERROR: Package $package has already been written before!",
+            "\tMost likely this is not what you want.",
+            "\tBailing out.",
+        );
+    }
+    $packages_created{$package} = 1;
 
-	my ($outdir, $filename) = $self->_get_outdir_and_filename();
+    my ($outdir, $filename) = $self->_get_outdir_and_filename();
 
-	if (! -d $outdir) {
-		_create_directory_or_die($outdir);
-	}
+    if (!-d $outdir) {
+        _create_directory_or_die($outdir);
+    }
 
-	my ($print_line, $done)= _get_line_printer_for($filename);
-	$print_line->("package $package;");
-	$print_line->();
+    my ($print_line, $done) = _get_line_printer_for($filename);
+    $print_line->("package $package;");
+    $print_line->();
 
-	map { $print_line->("use $_;") } @{$self->{use}};
-	$print_line->() if (scalar @{$self->{use}});
+    map { $print_line->("use $_;") } @{$self->{use}};
+    $print_line->() if (scalar @{$self->{use}});
 
-	$print_line->('# You should never edit this file. '
-			 . 'Everything in here is automatically');
-	$print_line->('# generated by '
-			. ($self->{package_generated_by}
-			   || $self->{generated_by})
-			. '.');
-	$print_line->();
+    $print_line->('# You should never edit this file. '
+          . 'Everything in here is automatically');
+    $print_line->('# generated by '
+          . ($self->{package_generated_by} || $self->{generated_by})
+          . '.');
+    $print_line->();
 
-	map { $print_line->($_) } @{$self->{content}};
+    map { $print_line->($_) } @{$self->{content}};
 
-	$print_line->('1;');
-	$done->();
-	return $self->_verify_package($package, $filename, $options);
+    $print_line->('1;');
+    $done->();
+    return $self->_verify_package($package, $filename, $options);
 }
 
 sub _verify_package {
-	my ($self, $package, $filename, $options) = @_;
+    my ($self, $package, $filename, $options) = @_;
 
-	my $outdir = $self->{outdir};
+    my $outdir = $self->{outdir};
 
-	eval <<"	EOF";
+    eval <<"	EOF";
 	use lib '$outdir';
 	use $package;
 	EOF
-	if ($@) {
-		warn "Error while generating $filename:\n\t$@";
-		return 0;
-	} else {
-		if ($options->{verbose}) {
-			print "$filename\n";
-		}
-	}
-	eval <<"	EOF";
+    if ($@) {
+        warn "Error while generating $filename:\n\t$@";
+        return 0;
+    }
+    else {
+        if ($options->{verbose}) {
+            print "$filename\n";
+        }
+    }
+    eval <<"	EOF";
 	no lib '$outdir';
 	no $package;
 	EOF
-	return 1;
+    return 1;
 }
 
 sub create_or_die {
-	my ($self, $die_message, $options) = @_;
+    my ($self, $die_message, $options) = @_;
 
-	$die_message ||= '';
-	if (! $self->create($options)) {
-		die "$die_message $!";
-	}
+    $die_message ||= '';
+    if (!$self->create($options)) {
+        die "$die_message $!";
+    }
 }
 
 1;
 __END__
+
 =head1 NAME
 
 Code::Generator::Perl - Perl module for generating perl modules
