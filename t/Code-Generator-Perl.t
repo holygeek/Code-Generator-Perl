@@ -24,7 +24,7 @@ sub ok_compare_with_file {
     $file_content = <$output>;
     close $output;
 
-    eq_or_diff($expected, $file_content, $message);
+    eq_or_diff($file_content, $expected, $message);
 }
 
 
