@@ -118,6 +118,13 @@ sub add {
     return $self;
 }
 
+sub add_verbatim {
+    my ($self, $text) = @_;
+
+    $self->_add_content($text);
+    return $self;
+}
+
 sub _add_content {
     my ($self, $content) = @_;
 
@@ -401,6 +408,10 @@ L<Data::Dumper> documentation for how this value is used.
 If set to 1 the variable will be set to readonly using the Readonly module.
 
 =back
+
+=item I<add_verbatim>($arg)
+
+Adds $arg verbatim into the generated module.
 
 =item I<use>( 'Foo', 'Bar', ... )
 
