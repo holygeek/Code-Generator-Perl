@@ -77,15 +77,18 @@ Bareword found where operator expected at t/tmp/Broken.pm line 9, near "$broken 
 	(Missing operator before var?)
 Error while generating t/tmp/Broken.pm:
 	syntax error at t/tmp/Broken.pm line 9, near "$broken var name "
-Compilation failed in require at (eval 29) line 2.
-BEGIN failed--compilation aborted at (eval 29) line 2.
+Compilation failed in require at (eval 31) line 2.
+BEGIN failed--compilation aborted at (eval 31) line 2.
 EOF
-    Test::Output::stderr_is (sub {
-	$generator
-	    ->new_package($package_name)
-	    ->add('broken var name' => 42)
-	    ->create();
-    }, $expected, 'Barf on error');
+    my $stderr_got = Test::Output::stderr_from (sub {
+            $generator
+                ->new_package($package_name)
+                ->add('broken var name' => 42)
+                ->create()
+        }
+    );
+
+    eq_or_diff($stderr_got, $expected, 'Barf on error');
 }
 #:}
 
